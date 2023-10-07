@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  articles  Article[] // Menambahkan field untuk relasi one-to-many dengan model Article
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  meta      String
+  slug      String
+  image     String
+  body      String   @db.LongText
+  category   Category? @relation(fields: [categoryId], references: [id]) // Menentukan hubungan dengan model Category
+  categoryId Int?    // Menambahkan field untuk menghubungkan artikel dengan kategori
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
